@@ -2,7 +2,6 @@ require("dotenv").config()
 const express = require("express")
 const app = express()
 const path = require("path")
-const RootRoute = require("./routes/root")
 const { logger, logEvents } = require("./middlewares/logger")
 const ErrorHandler = require("./middlewares/errorHandler")
 const cookieParser = require("cookie-parser")
@@ -10,6 +9,8 @@ const cors = require("cors")
 const corsOptions = require("./config/corsOptions")
 const connectDB = require("./config/dbConn")
 const mongoose = require("mongoose")
+const RootRoute = require("./routes/root")
+const UsersRoute = require("./routes/usersRoute")
 
 
 connectDB()
@@ -32,7 +33,10 @@ app.use(express.static(path.join(__dirname, "public")))
 
 
 // The request stream sees this middleware first
-app.use(RootRoute)
+app.use("/", RootRoute)
+
+// User Routes
+app.use("/users", UsersRoute)
 
 
 // This is for requests that are not found
