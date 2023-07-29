@@ -1,12 +1,18 @@
+require("dotenv").config()
 const express = require("express")
 const app = express()
 const path = require("path")
 const RootRoute = require("./routes/root")
-const { logger } = require("./middlewares/logger")
+const { logger, logEvents } = require("./middlewares/logger")
 const ErrorHandler = require("./middlewares/errorHandler")
 const cookieParser = require("cookie-parser")
 const cors = require("cors")
 const corsOptions = require("./config/corsOptions")
+const connectDB = require("./config/dbConn")
+const mongoose = require("mongoose")
+
+
+connectDB()
 
 app.use(logger)
 
@@ -20,7 +26,7 @@ app.use(express.json())
 app.use(cookieParser())
 
 // This is to server any static files from our server
-app.use("/", express.static(path.join(__dirname, "public")))
+app.use(express.static(path.join(__dirname, "public")))
 
 // Use logger to get information about the request
 
@@ -48,6 +54,15 @@ app.use(ErrorHandler)
 
 
 const port = process.env.PORT || 3500;
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`)
+
+mongoose.connection.once("open", () => {
+    console.log("Connected to Mongodb")
+    app.listen(port, () => {
+        console.log(`Server running on port ${port}`)
+    })
+})
+
+mongoose.connection.on("error", (err) => {
+    console.log(err)
+    logEvents(`${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`, "mongoErrLogs.log")
 })
