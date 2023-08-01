@@ -11,6 +11,7 @@ const connectDB = require("./config/dbConn")
 const mongoose = require("mongoose")
 const RootRoute = require("./routes/root")
 const UsersRoute = require("./routes/usersRoute")
+const NotesRoute = require("./routes/notesRoutes")
 
 
 connectDB()
@@ -38,6 +39,9 @@ app.use("/", RootRoute)
 // User Routes
 app.use("/users", UsersRoute)
 
+//Notes Routes
+app.use("/notes", NotesRoute)
+
 
 // This is for requests that are not found
 app.all("*", (req, res) => {
@@ -57,7 +61,7 @@ app.all("*", (req, res) => {
 app.use(ErrorHandler)
 
 
-const port = process.env.PORT || 3500;
+const port = process.env.PORT;
 
 mongoose.connection.once("open", () => {
     console.log("Connected to Mongodb")
