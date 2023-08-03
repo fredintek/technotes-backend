@@ -1,5 +1,6 @@
 require("dotenv").config()
 const express = require("express")
+require("dotenv").config()
 const app = express()
 const path = require("path")
 const { logger, logEvents } = require("./middlewares/logger")
@@ -12,6 +13,7 @@ const mongoose = require("mongoose")
 const RootRoute = require("./routes/root")
 const UsersRoute = require("./routes/usersRoute")
 const NotesRoute = require("./routes/notesRoutes")
+const AuthRoutes = require("./routes/authRoute")
 
 
 connectDB()
@@ -41,6 +43,9 @@ app.use("/users", UsersRoute)
 
 //Notes Routes
 app.use("/notes", NotesRoute)
+
+//Auth Routes
+app.use("/auth", AuthRoutes)
 
 
 // This is for requests that are not found
