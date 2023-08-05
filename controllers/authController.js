@@ -47,7 +47,7 @@ exports.login = asyncHandler(async (req, res) => {
     res.cookie("jwt", refreshtoken, {
         maxAge: Number(process.env.COOKIE_EXP_TIME),
         httpOnly: true,
-        // secure: true,
+        secure: true,
         sameSite: "none"
     })
 
@@ -61,9 +61,11 @@ exports.login = asyncHandler(async (req, res) => {
 //@access Public - because access token has expired
 exports.refresh = asyncHandler(async (req, res) => {
 
-    const refreshToken = req.cookies?.jwt
+    const cookies = req.cookies
 
-    if (!refreshToken) return res.status(401).json({ message: "Unauthorized" })
+    if (!cookies?.jwt) return res.status(401).json({ message: 'Unauthorized' })
+
+    const refreshToken = cookies.jwt
 
     jwt.verify(
         refreshToken,
@@ -103,7 +105,7 @@ exports.logout = asyncHandler(async (req, res) => {
 
     res.clearCookie("jwt", {
         httpOnly: true,
-        // secure: true,
+        secure: true,
         sameSite: "none"
     })
 
