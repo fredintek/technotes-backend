@@ -33,7 +33,7 @@ exports.login = asyncHandler(async (req, res) => {
             }
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "15s" }
+        { expiresIn: process.env.ACCESS_TOKEN_EXP_TIME }
     )
 
     const refreshtoken = jwt.sign(
@@ -41,13 +41,13 @@ exports.login = asyncHandler(async (req, res) => {
             "username": foundUser.username
         },
         process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: "1d" }
+        { expiresIn: process.env.REFRESH_TOKEN_EXP_TIME }
     )
 
     res.cookie("jwt", refreshtoken, {
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: Number(process.env.COOKIE_EXP_TIME),
         httpOnly: true,
-        secure: true,
+        // secure: true,
         sameSite: "none"
     })
 
@@ -83,7 +83,7 @@ exports.refresh = asyncHandler(async (req, res) => {
                     }
                 },
                 process.env.ACCESS_TOKEN_SECRET,
-                { expiresIn: "15s" }
+                { expiresIn: process.env.ACCESS_TOKEN_EXP_TIME }
             )
 
             res.status(200).json({ accessToken })
@@ -103,7 +103,7 @@ exports.logout = asyncHandler(async (req, res) => {
 
     res.clearCookie("jwt", {
         httpOnly: true,
-        secure: true,
+        // secure: true,
         sameSite: "none"
     })
 
